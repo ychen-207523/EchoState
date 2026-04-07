@@ -1,19 +1,6 @@
-import { resolveAction } from "./core/engine";
-import { Action, Scenario } from "./core/types";
+import { runScene } from "./core/loop";
+import { Action } from "./core/types";
 import { demoScenario } from "./scenarios/demo";
-
-function applyTurn(scenario: Scenario, action: Action): Scenario {
-  const result = resolveAction(scenario, action);
-
-  console.log("Action:", action);
-  console.log("Result:", result);
-
-  return {
-    ...scenario,
-    worldState: result.worldState,
-    relationships: result.relationships,
-  };
-}
 
 console.log("Scenario:", demoScenario.title);
 
@@ -32,8 +19,7 @@ const actions: Action[] = [
   },
 ];
 
-let currentScenario = demoScenario;
+const result = runScene(demoScenario, actions);
 
-for (const action of actions) {
-  currentScenario = applyTurn(currentScenario, action);
-}
+console.log("Turn Results:", result.turnResults);
+console.log("Final Scenario:", result.finalScenario);
