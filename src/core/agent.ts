@@ -18,6 +18,8 @@ export function chooseAction(
       actorId: character.id,
       targetId: otherCharacter.id,
       reason: `${character.name} is close to a breaking point and lashes out.`,
+      tone: "sharp and defensive",
+      message: `Stop pretending you understand what this is costing me, ${otherCharacter.name}.`,
     };
   }
 
@@ -27,6 +29,8 @@ export function chooseAction(
       actorId: character.id,
       targetId: otherCharacter.id,
       reason: `${character.name} tries to regain control of the situation.`,
+      tone: "controlled but strained",
+      message: `Listen to me, ${otherCharacter.name}. If we keep panicking, we will make this worse.`,
     };
   }
 
@@ -35,5 +39,7 @@ export function chooseAction(
     actorId: character.id,
     targetId: otherCharacter.id,
     reason: `${character.name} tries to lower tension for now.`,
+    tone: "gentle but cautious",
+    message: `I am not your enemy, ${otherCharacter.name}. I am trying to hold this together with you.`,
   };
 }

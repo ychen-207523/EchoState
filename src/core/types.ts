@@ -38,6 +38,8 @@ export interface Action {
   actorId: CharacterId;
   targetId: CharacterId;
   reason: string;
+  tone?: string;
+  message?: string;
 }
 
 export interface TurnResult {
