@@ -1,4 +1,4 @@
-import { chooseAction } from "./core/agent";
+import { RuleBasedActionDecider } from "./core/agent";
 import { runScene } from "./core/loop";
 import { TurnResult } from "./core/types";
 import { demoScenario } from "./scenarios/demo";
@@ -19,13 +19,17 @@ console.log(`Scenario: ${demoScenario.title}`);
 console.log(demoScenario.description);
 console.log("===");
 
+const decider = new RuleBasedActionDecider();
 const wife = demoScenario.characters.find((character) => character.id === "wife");
 
 if (!wife) {
   throw new Error("Could not find the wife character in the demo scenario.");
 }
 
-const firstAction = chooseAction(demoScenario, wife);
+const firstAction = decider.chooseAction({
+  scenario: demoScenario,
+  character: wife,
+});
 const firstRun = runScene(demoScenario, [firstAction]);
 
 const mother = firstRun.finalScenario.characters.find(
@@ -36,7 +40,10 @@ if (!mother) {
   throw new Error("Could not find the mother character in the updated scenario.");
 }
 
-const secondAction = chooseAction(firstRun.finalScenario, mother);
+const secondAction = decider.chooseAction({
+  scenario: firstRun.finalScenario,
+  character: mother,
+});
 const secondRun = runScene(firstRun.finalScenario, [secondAction]);
 
 printTurnResult(firstRun.turnResults[0]);

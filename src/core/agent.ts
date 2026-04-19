@@ -1,6 +1,7 @@
 import { Action, Character, Scenario } from "./types";
+import { ActionDecider, ActionDecisionInput } from "./model";
 
-export function chooseAction(
+function buildRuleBasedAction(
   scenario: Scenario,
   character: Character,
 ): Action {
@@ -42,4 +43,10 @@ export function chooseAction(
     tone: "gentle but cautious",
     message: `I am not your enemy, ${otherCharacter.name}. I am trying to hold this together with you.`,
   };
+}
+
+export class RuleBasedActionDecider implements ActionDecider {
+  chooseAction(input: ActionDecisionInput): Action {
+    return buildRuleBasedAction(input.scenario, input.character);
+  }
 }
