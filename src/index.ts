@@ -1,8 +1,23 @@
 import { chooseAction } from "./core/agent";
 import { runScene } from "./core/loop";
+import { TurnResult } from "./core/types";
 import { demoScenario } from "./scenarios/demo";
 
-console.log("Scenario:", demoScenario.title);
+function printTurnResult(turnResult: TurnResult): void {
+  console.log(`Round ${turnResult.worldState.round}`);
+  console.log(`Actor: ${turnResult.action.actorId}`);
+  console.log(`Action: ${turnResult.action.type}`);
+  console.log(`Tone: ${turnResult.action.tone ?? "none"}`);
+  console.log(`Reason: ${turnResult.action.reason}`);
+  console.log(`Message: ${turnResult.action.message ?? "none"}`);
+  console.log(`Pressure: ${turnResult.worldState.pressure}`);
+  console.log("Relationships:", turnResult.relationships);
+  console.log("---");
+}
+
+console.log(`Scenario: ${demoScenario.title}`);
+console.log(demoScenario.description);
+console.log("===");
 
 const wife = demoScenario.characters.find((character) => character.id === "wife");
 
@@ -24,6 +39,6 @@ if (!mother) {
 const secondAction = chooseAction(firstRun.finalScenario, mother);
 const secondRun = runScene(firstRun.finalScenario, [secondAction]);
 
-console.log("First Turn:", firstRun.turnResults[0]);
-console.log("Second Turn:", secondRun.turnResults[0]);
-console.log("Final Scenario:", secondRun.finalScenario);
+printTurnResult(firstRun.turnResults[0]);
+printTurnResult(secondRun.turnResults[0]);
+console.log("Final Pressure:", secondRun.finalScenario.worldState.pressure);
