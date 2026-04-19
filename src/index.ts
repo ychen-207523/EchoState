@@ -1,4 +1,4 @@
-import { RuleBasedActionDecider } from "./core/agent";
+import { RuleBasedActionDecider } from "./core/ai";
 import { runScene } from "./core/loop";
 import { TurnResult } from "./core/types";
 import { demoScenario } from "./scenarios/demo";
