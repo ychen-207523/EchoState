@@ -1,4 +1,4 @@
-import { RuleBasedActionDecider } from "./core/ai";
+import { createActionDecider } from "./core/ai";
 import { runScene } from "./core/loop";
 import { TurnResult } from "./core/types";
 import { demoScenario } from "./scenarios/demo";
@@ -15,37 +15,47 @@ function printTurnResult(turnResult: TurnResult): void {
   console.log("---");
 }
 
-console.log(`Scenario: ${demoScenario.title}`);
-console.log(demoScenario.description);
-console.log("===");
+async function main(): Promise<void> {
+  console.log(`Scenario: ${demoScenario.title}`);
+  console.log(demoScenario.description);
+  console.log("===");
 
-const decider = new RuleBasedActionDecider();
-const wife = demoScenario.characters.find((character) => character.id === "wife");
+  const decider = createActionDecider("rule-based");
+  const wife = demoScenario.characters.find((character) => character.id === "wife");
 
-if (!wife) {
-  throw new Error("Could not find the wife character in the demo scenario.");
+  if (!wife) {
+    throw new Error("Could not find the wife character in the demo scenario.");
+  }
+
+  const firstAction = await Promise.resolve(
+    decider.chooseAction({
+      scenario: demoScenario,
+      character: wife,
+    }),
+  );
+  const firstRun = runScene(demoScenario, [firstAction]);
+
+  const mother = firstRun.finalScenario.characters.find(
+    (character) => character.id === "mother",
+  );
+
+  if (!mother) {
+    throw new Error("Could not find the mother character in the updated scenario.");
+  }
+
+  const secondAction = await Promise.resolve(
+    decider.chooseAction({
+      scenario: firstRun.finalScenario,
+      character: mother,
+    }),
+  );
+  const secondRun = runScene(firstRun.finalScenario, [secondAction]);
+
+  printTurnResult(firstRun.turnResults[0]);
+  printTurnResult(secondRun.turnResults[0]);
+  console.log("Final Pressure:", secondRun.finalScenario.worldState.pressure);
 }
 
-const firstAction = decider.chooseAction({
-  scenario: demoScenario,
-  character: wife,
+main().catch((error: unknown) => {
+  console.error("Failed to run EchoState demo.", error);
 });
-const firstRun = runScene(demoScenario, [firstAction]);
-
-const mother = firstRun.finalScenario.characters.find(
-  (character) => character.id === "mother",
-);
-
-if (!mother) {
-  throw new Error("Could not find the mother character in the updated scenario.");
-}
-
-const secondAction = decider.chooseAction({
-  scenario: firstRun.finalScenario,
-  character: mother,
-});
-const secondRun = runScene(firstRun.finalScenario, [secondAction]);
-
-printTurnResult(firstRun.turnResults[0]);
-printTurnResult(secondRun.turnResults[0]);
-console.log("Final Pressure:", secondRun.finalScenario.worldState.pressure);

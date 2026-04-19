@@ -1,6 +1,8 @@
 import { Action, Character, Scenario } from "./types";
 import { ActionDecider, ActionDecisionInput } from "./model";
 
+export type ActionDeciderKind = "rule-based";
+
 function buildRuleBasedAction(
   scenario: Scenario,
   character: Character,
@@ -48,5 +50,16 @@ function buildRuleBasedAction(
 export class RuleBasedActionDecider implements ActionDecider {
   chooseAction(input: ActionDecisionInput): Action {
     return buildRuleBasedAction(input.scenario, input.character);
+  }
+}
+
+export function createActionDecider(
+  kind: ActionDeciderKind,
+): ActionDecider {
+  switch (kind) {
+    case "rule-based":
+      return new RuleBasedActionDecider();
+    default:
+      throw new Error(`Unsupported action decider kind: ${kind}`);
   }
 }
